@@ -1,0 +1,55 @@
+{
+  "name": "func-args",
+  "version": "1.0.0",
+  "description": "ECMAScript Function Arguments parser, Get arguments of a function, useful for and used in dependency injectors. Works for regular functions, generator functions and arrow functions.",
+  "keywords": [
+    "args",
+    "arguments",
+    "arrow",
+    "arrow-function",
+    "arrows",
+    "async",
+    "dependency",
+    "deps",
+    "extract",
+    "fn",
+    "func",
+    "function",
+    "function-arguments",
+    "generator",
+    "generators",
+    "get",
+    "inject",
+    "injectors",
+    "parameters",
+    "params",
+    "parse",
+    "regular",
+    "tostring",
+    "useful"
+  ],
+  "homepage": "https://github.com/bluelovers/node-func-args#readme",
+  "bugs": {
+    "url": "https://github.com/bluelovers/node-func-args/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bluelovers/node-func-args.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "acorn": "^5.6.1"
+  },
+  "devDependencies": {
+    "@types/acorn": "^4.0.3",
+    "@types/estree": "^0.0.39"
+  }
+}
