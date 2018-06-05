@@ -25,9 +25,9 @@ export interface IParseFunc
 	source: string;
 }
 
-export function parseFunc(fn, allowNative?: boolean, options?: acorn.Options): IParseFunc
-export function parseFunc(fn, options?: acorn.Options, allowNative?: boolean): IParseFunc
-export function parseFunc(fn, options?, allowNative?): IParseFunc
+export function parse(fn, allowNative?: boolean, options?: acorn.Options): IParseFunc
+export function parse(fn, options?: acorn.Options, allowNative?: boolean): IParseFunc
+export function parse(fn, options?, allowNative?): IParseFunc
 {
 	let source = toString(fn, true);
 
@@ -173,10 +173,16 @@ export function parseFnParams(elems: ESTree.Function["params"]): IParams
 				arr.push(node.name);
 				break;
 			case 'ObjectPattern':
+			// @ts-ignore
+			// support babylon
+			case 'ObjectProperty':
 
-				let k = node.properties.reduce(function (a, b: ESTree.Property)
+				// @ts-ignore
+				let keys = node.type == 'ObjectProperty' ? node.key : node.properties;
+
+				let k = keys.reduce(function (a, b: ESTree.Property)
 				{
-					if (b.type == 'Property')
+					if (b.type == 'Property' || b.type == 'ObjectProperty')
 					{
 						let key = (b.key as ESTree.Identifier).name;
 
@@ -192,6 +198,7 @@ export function parseFnParams(elems: ESTree.Function["params"]): IParams
 
 				arr.push(k);
 				break;
+
 			case 'AssignmentPattern':
 
 				// @ts-ignore
@@ -220,6 +227,15 @@ export function parseFnParams(elems: ESTree.Function["params"]): IParams
 export function unknowWarn(node: ESTree.Node)
 {
 	console.warn(`[skip] unknow type ${node.type}, ${JSON.stringify(node)}`);
+
+	//console.dir(node, {depth: 5});
 }
 
-export default parseFunc
+export function parseFunc(fn, allowNative?: boolean, options?: acorn.Options): IParseFunc
+export function parseFunc(fn, options?: acorn.Options, allowNative?: boolean): IParseFunc
+export function parseFunc(fn, options?, allowNative?): IParseFunc
+{
+	return parse(fn, options, allowNative);
+}
+
+export default parse

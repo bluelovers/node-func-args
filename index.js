@@ -5,7 +5,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const acorn = require("acorn");
 exports.SUPPORT_FUNCTION_TO_STRING = /\{ \[native code\] \}$/.test(toString(Math.abs));
-function parseFunc(fn, options, allowNative) {
+function parse(fn, options, allowNative) {
     let source = toString(fn, true);
     if (typeof options === 'boolean') {
         [options, allowNative] = [allowNative, options];
@@ -64,7 +64,7 @@ function parseFunc(fn, options, allowNative) {
         source: toString(fn),
     };
 }
-exports.parseFunc = parseFunc;
+exports.parse = parse;
 function toValues(args) {
     // @ts-ignore
     return Object.values(args).reduce(function (a, b) {
@@ -102,8 +102,13 @@ function parseFnParams(elems) {
                 arr.push(node.name);
                 break;
             case 'ObjectPattern':
-                let k = node.properties.reduce(function (a, b) {
-                    if (b.type == 'Property') {
+            // @ts-ignore
+            // support babylon
+            case 'ObjectProperty':
+                // @ts-ignore
+                let keys = node.type == 'ObjectProperty' ? node.key : node.properties;
+                let k = keys.reduce(function (a, b) {
+                    if (b.type == 'Property' || b.type == 'ObjectProperty') {
                         let key = b.key.name;
                         a[key] = key;
                     }
@@ -135,6 +140,11 @@ function parseFnParams(elems) {
 exports.parseFnParams = parseFnParams;
 function unknowWarn(node) {
     console.warn(`[skip] unknow type ${node.type}, ${JSON.stringify(node)}`);
+    //console.dir(node, {depth: 5});
 }
 exports.unknowWarn = unknowWarn;
-exports.default = parseFunc;
+function parseFunc(fn, options, allowNative) {
+    return parse(fn, options, allowNative);
+}
+exports.parseFunc = parseFunc;
+exports.default = parse;
