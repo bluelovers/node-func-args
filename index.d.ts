@@ -4,6 +4,7 @@
 import * as acorn from 'acorn';
 import * as ESTree from 'estree';
 import { _IParams } from './params';
+export * from './params';
 export declare const SUPPORT_FUNCTION_TO_STRING: boolean;
 export interface IParseFunc {
     type: "FunctionExpression" | "ArrowFunctionExpression";

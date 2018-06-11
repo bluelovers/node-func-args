@@ -6,6 +6,7 @@ import * as acorn from 'acorn';
 import * as ESTree from 'estree';
 import { ArrowFunctionExpression, FunctionExpression } from 'estree';
 import { IParams, _IParams, parseFnParams, toValues } from './params';
+export * from './params';
 
 export const SUPPORT_FUNCTION_TO_STRING = /\{ \[native code\] \}$/.test(toString(Math.abs));
 

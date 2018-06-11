@@ -1,6 +1,6 @@
 {
   "name": "func-args",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "ECMAScript Function Arguments parser, Get arguments of a function, useful for and used in dependency injectors. Works for regular functions, generator functions and arrow functions.",
   "keywords": [
     "args",

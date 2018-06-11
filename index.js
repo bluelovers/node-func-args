@@ -2,9 +2,13 @@
 /**
  * Created by user on 2018/6/4/004.
  */
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 const acorn = require("acorn");
 const params_1 = require("./params");
+__export(require("./params"));
 exports.SUPPORT_FUNCTION_TO_STRING = /\{ \[native code\] \}$/.test(toString(Math.abs));
 function parse(fn, options, allowNative) {
     let source = toString(fn, true);
