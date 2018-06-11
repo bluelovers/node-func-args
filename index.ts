@@ -3,8 +3,9 @@
  */
 
 import * as acorn from 'acorn';
-import { ArrowFunctionExpression, Expression, FunctionDeclaration, FunctionExpression } from 'estree';
 import * as ESTree from 'estree';
+import { ArrowFunctionExpression, FunctionExpression } from 'estree';
+import { IParams, _IParams, parseFnParams, toValues } from './params';
 
 export const SUPPORT_FUNCTION_TO_STRING = /\{ \[native code\] \}$/.test(toString(Math.abs));
 
@@ -117,24 +118,6 @@ export function parse(fn, options?, allowNative?): IParseFunc
 	} as IParseFunc;
 }
 
-export function toValues(args: IParams | _IParams): string[]
-{
-	// @ts-ignore
-	return Object.values(args).reduce(function (a: string[], b)
-	{
-		if (typeof b !== 'string')
-		{
-			a.push(...toValues(b))
-		}
-		else
-		{
-			a.push(b);
-		}
-
-		return a;
-	}, [] as string[])
-}
-
 export function toString(fn, wrap?: boolean): string
 {
 	let s = Function.prototype.toString.call(fn);
@@ -156,79 +139,6 @@ export function fnType<T extends ESTree.Function>(ast: T)
 	}
 
 	throw new TypeError(`Expected an Function but got ${ast.type}.`)
-}
-
-export type _IParams = string | string[] | {
-	[k: string]: string,
-};
-export type IParams = Array<_IParams | _IParams[]>;
-
-export function parseFnParams(elems: ESTree.Function["params"]): IParams
-{
-	return elems.reduce(function (arr, node)
-	{
-		switch (node.type)
-		{
-			case 'Identifier':
-				arr.push(node.name);
-				break;
-			case 'ObjectPattern':
-			// @ts-ignore
-			// support babylon
-			case 'ObjectProperty':
-
-				// @ts-ignore
-				let keys = node.type == 'ObjectProperty' ? node.key : node.properties;
-
-				let k = keys.reduce(function (a, b: ESTree.Property)
-				{
-					if (b.type == 'Property' || b.type == 'ObjectProperty')
-					{
-						let key = (b.key as ESTree.Identifier).name;
-
-						a[key] = key;
-					}
-					else
-					{
-						unknowWarn(b);
-					}
-
-					return a;
-				}, {});
-
-				arr.push(k);
-				break;
-
-			case 'AssignmentPattern':
-
-				// @ts-ignore
-				arr.push(node.left.name);
-
-				break;
-			case 'RestElement':
-
-				// @ts-ignore
-				arr.push('...' + node.argument.name);
-
-				break;
-			case 'ArrayPattern':
-
-				arr.push(parseFnParams(node.elements));
-
-				break;
-			default:
-				unknowWarn(node);
-				break;
-		}
-		return arr;
-	}, []);
-}
-
-export function unknowWarn(node: ESTree.Node)
-{
-	console.warn(`[skip] unknow type ${node.type}, ${JSON.stringify(node)}`);
-
-	//console.dir(node, {depth: 5});
 }
 
 export function parseFunc(fn, allowNative?: boolean, options?: acorn.Options): IParseFunc
